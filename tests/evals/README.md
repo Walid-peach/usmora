@@ -1,12 +1,3 @@
 # Evaluations
 
-This folder will contain synthetic tests for:
-
-- cross-user and cross-scope leakage;
-- unauthorized private-context retrieval;
-- consent transition enforcement;
-- deletion and revocation behavior;
-- prompt-injection resistance at trust boundaries;
-- communication quality without diagnosis or impersonation.
-
-Deterministic privacy tests take precedence over qualitative model scoring.
+Cross-cutting privacy and communication evaluations are deferred until a real provider or persistence layer exists. Current deterministic behavior and schema boundaries are tested under `apps/api/tests` and `apps/web/tests` with synthetic fixtures only.

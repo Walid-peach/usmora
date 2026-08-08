@@ -1,5 +1,3 @@
-# AI package
+# AI adapter
 
-Planned provider-independent adapter, structured output schemas, prompt versions, and evaluation helpers.
-
-The model may generate suggestions and drafts. It may not authorize access, change memory scope, send messages, or perform deletion.
+The first draft keeps its provider-independent interface in `apps/api/app/domain/reflection.py`. The active provider is deterministic, local, and requires no secret or third-party service.

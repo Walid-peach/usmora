@@ -6,6 +6,7 @@
 # Python
 __pycache__/
 *.py[cod]
+*.egg-info/
 .venv/
 .pytest_cache/
 .ruff_cache/
@@ -14,6 +15,7 @@ __pycache__/
 # Node
 node_modules/
 .next/
+*.tsbuildinfo
 dist/
 coverage/
 

@@ -1,46 +1,107 @@
 # Usmora
 
-Usmora is a private AI relationship copilot that helps people turn emotional reactions into thoughtful, user-approved conversations.
+Usmora is a privacy-first communication reflection prototype. It helps one person separate a difficult situation into **Facts, Assumptions, Feelings, and Needs**, then offers a calm message draft that the person can edit and copy.
 
-## Current phase
+Nothing is sent automatically. The deterministic local engine is a prototype aid, not objective truth.
 
-This repository is an isolated development scaffold for a narrow, single-user prototype. Product validation is still in progress. Scaffolding does not authorize production deployment or the use of real relationship data.
+## Safety and privacy boundary
 
-## Initial wedge
+- Demo input is processed in memory and is not persisted by this prototype.
+- Do not use real relationship data in development, tests, screenshots, or demos. All repository examples are synthetic.
+- Usmora is communication support, not therapy, diagnosis, emergency support, surveillance, or partner monitoring.
+- There is no authentication, database, telemetry, partner account, shared memory, background queue, external AI provider, or deployment in this draft.
+- Because there is no authentication and transport security is not configured, this prototype is for isolated local development only.
 
-A controlled workflow:
+If someone may be in immediate danger, contact local emergency services or an appropriate crisis resource; do not rely on this prototype.
 
-1. A user describes a situation.
-2. The application separates facts, assumptions, feelings, and needs.
-3. It retrieves only authorized private context.
-4. It helps clarify the user's intent.
-5. It optionally drafts a message.
-6. The user edits and explicitly approves it.
-7. The user copies or discards the draft. Usmora never sends it autonomously.
-
-## Planned stack
-
-- Web: Next.js
-- API: FastAPI
-- Data: PostgreSQL
-- Semantic retrieval: pgvector only when justified
-- Local deployment: Docker Compose
-- Edge/TLS: Caddy
-- AI: provider-independent adapter
-- Evaluation: deterministic privacy/leakage tests and qualitative communication checks
-
-## Repository layout
+## Architecture
 
 ```text
-apps/web/        Next.js user interface
-apps/api/        FastAPI application and domain services
-packages/ai/     Provider adapter, prompts, structured outputs, evaluations
-tests/evals/     Privacy, leakage, consent, and communication evaluations
-docs/            Architecture, decisions, and trust model
+Next.js web (apps/web)
+  -> schema-validated HTTP request
+FastAPI modular API (apps/api)
+  -> ReflectionProvider protocol
+DeterministicReflectionProvider (local, no key, no network)
 ```
 
-## Development control plane
+The provider interface keeps model choice independent from application trust boundaries. The API does not log raw situations or drafts; its container disables access logging. See `AGENTS.md` and `docs/architecture.md` for the longer-term boundaries.
 
-Donna coordinates work through the `usmora` Hermes Kanban board. Benjamin is the assigned engineering profile. External GitHub creation, pushes, deployments, and production credentials require Walid's explicit approval.
+## Run with Docker Compose
 
-See `AGENTS.md` and `docs/architecture.md` before implementation.
+Prerequisite: Docker with Compose v2.
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Open http://localhost:3000. API health is at http://localhost:8000/health.
+
+Stop with:
+
+```bash
+docker compose down
+```
+
+## Run directly
+
+API (Python 3.11+):
+
+```bash
+cd apps/api
+python3 -m venv .venv
+.venv/bin/pip install -e '.[dev]'
+.venv/bin/uvicorn app.main:app --reload --no-access-log
+```
+
+Web (Node.js 22+), in another terminal:
+
+```bash
+cd apps/web
+npm ci
+NEXT_PUBLIC_API_URL=http://localhost:8000 npm run dev
+```
+
+## Verification
+
+```bash
+# API
+cd apps/api
+.venv/bin/pytest -q
+.venv/bin/ruff check .
+
+# Web
+cd ../web
+npm test
+npm run typecheck
+npm run lint
+npm run build
+npm audit --omit=dev
+
+# Compose
+cd ../..
+docker compose config -q
+docker compose up --build -d
+curl --fail http://localhost:8000/health
+curl --fail http://localhost:3000
+curl --fail -X POST http://localhost:8000/v1/reflections \
+  -H 'Content-Type: application/json' \
+  --data '{"situation":"My housemate arrived after our agreed cooking time, and I felt frustrated."}'
+docker compose down
+```
+
+## API
+
+`GET /health` returns `{"status":"ok"}`.
+
+`POST /v1/reflections` accepts:
+
+```json
+{"situation":"A synthetic situation between housemates."}
+```
+
+`situation` must contain non-whitespace text and be at most 4,000 characters. Responses include `facts`, `assumptions`, `feelings`, `needs`, `draft`, and a prototype disclaimer.
+
+## Known limitations
+
+The deterministic provider uses deliberately small keyword rules, so its output is repetitive and cannot understand nuance. No data is persisted, but browser/API process memory and local infrastructure still require normal device security. Clipboard content is controlled by the operating system after the user explicitly copies it. Production identity, consent, deletion, encryption, abuse handling, model evaluation, and deployment remain deferred.
