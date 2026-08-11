@@ -50,7 +50,7 @@ Railway API:
 - Environment variable:
 
   ```text
-  ALLOWED_ORIGINS=https://<VERCEL-PRODUCTION-ORIGIN>
+  ALLOWED_ORIGINS=https://usmora.vercel.app
   ```
 
 Vercel web:
@@ -62,7 +62,7 @@ Vercel web:
   NEXT_PUBLIC_API_URL=https://usmora-production.up.railway.app
   ```
 
-`ALLOWED_ORIGINS` is a comma-separated exact-origin allowlist. It rejects blank entries and wildcard origins; when unset, only `http://localhost:3000` is allowed. Replace `<VERCEL-PRODUCTION-ORIGIN>` with the exact Vercel production origin before enabling the preview; do not include a path, trailing slash, wildcard, or blank entry.
+`ALLOWED_ORIGINS` is a comma-separated exact-origin allowlist. It rejects blank entries and wildcard origins; when unset, only `http://localhost:3000` is allowed. The production value above is the exact Vercel origin; do not include a path, trailing slash, wildcard, or blank entry.
 
 Stop with:
 
