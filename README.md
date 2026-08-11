@@ -37,6 +37,33 @@ docker compose up --build
 
 Open http://localhost:3000. API health is at http://localhost:8000/health.
 
+## Vercel and Railway preview settings
+
+The preview remains deterministic, synthetic-data-only, in-memory, and unable to send messages. Do not use real relationship data. Configure the two platforms manually as follows:
+
+Railway API:
+
+- Root Directory: `/apps/api`
+- Config-as-code: `apps/api/railway.toml` (Railpack)
+- Health check path: `/health`
+- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- Environment variable:
+
+  ```text
+  ALLOWED_ORIGINS=https://<VERCEL-PRODUCTION-ORIGIN>
+  ```
+
+Vercel web:
+
+- Root Directory: `/apps/web`
+- Environment variable:
+
+  ```text
+  NEXT_PUBLIC_API_URL=https://usmora-production.up.railway.app
+  ```
+
+`ALLOWED_ORIGINS` is a comma-separated exact-origin allowlist. It rejects blank entries and wildcard origins; when unset, only `http://localhost:3000` is allowed. Replace `<VERCEL-PRODUCTION-ORIGIN>` with the exact Vercel production origin before enabling the preview; do not include a path, trailing slash, wildcard, or blank entry.
+
 Stop with:
 
 ```bash
