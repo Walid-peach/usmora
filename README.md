@@ -46,7 +46,7 @@ Railway API:
 - Root Directory: `/apps/api`
 - Config-as-code: `apps/api/railway.toml` (Railpack)
 - Health check path: `/health`
-- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- Start command: `sh -c 'exec uvicorn app.main:app --host 0.0.0.0 --port "$PORT"'`
 - Environment variable:
 
   ```text
